@@ -1,9 +1,9 @@
-import { DataTypes, Sequelize } from "sequelize";
+import mongoose from "mongoose";
 
-export const FreeGameModel = (sequelize: Sequelize) => {
-    return sequelize.define('freegame', {
-        name: DataTypes.STRING,
-        description: DataTypes.STRING,
-        image: DataTypes.STRING,
-    });
-}
+const freeGameSchema = new mongoose.Schema({
+  name: String,
+  description: String,
+  image: String,
+});
+
+export const FreeGame = mongoose.model("FreeGame", freeGameSchema);

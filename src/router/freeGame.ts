@@ -1,53 +1,76 @@
 import { Router } from "express";
-import { FreeGame } from "..";
+import { FreeGame } from "../model/FreeGame";
 
 export const freeGameRouter = Router();
 
 freeGameRouter.get("/", async (req, res) => {
-    const officialGames = await FreeGame.findAll();
-    res.json(officialGames);
+    try {
+        const freeGames = await FreeGame.find();
+        res.json(freeGames);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Internal Server Error");
+    }
 });
 
 freeGameRouter.get("/:id", async (req, res) => {
-    const officialGame = await FreeGame.findOne({ where: { id: req.params.id } });
-    if (officialGame) {
-        res.json(officialGame);
-    }
-    else {
-        res.status(404).send("Game not found");
+    try {
+        const freeGame = await FreeGame.findById(req.params.id);
+        if (freeGame) {
+            res.json(freeGame);
+        } else {
+            res.status(404).send("Game not found");
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Internal Server Error");
     }
 });
 
 freeGameRouter.post("/", async (req, res) => {
     const { name, description, image } = req.body.data;
-    if(!name || !description || !image){
+    if (!name || !description || !image) {
         res.status(400).send("Missing required information");
-    }
-    else {
-        const newOfficialGame = await FreeGame.create({ name, description, image });
-        res.json(newOfficialGame);
+    } else {
+        try {
+            const newFreeGame = await FreeGame.create({ name, description, image });
+            res.json(newFreeGame);
+        } catch (error) {
+            console.error(error);
+            res.status(500).send("Internal Server Error");
+        }
     }
 });
 
 freeGameRouter.put("/:id", async (req, res) => {
     const { name, description, image } = req.body.data;
-    const actual = await FreeGame.findOne({ where: { id: req.params.id } });
-    if (actual) {
-        const newOfficialGame = await actual.update({ name, description, image });
-        res.json(actual);
-    }
-    else {
-        res.status(404).send("Game not found");
+    try {
+        const freeGame = await FreeGame.findById(req.params.id);
+        if (freeGame) {
+            freeGame.name = name;
+            freeGame.description = description;
+            freeGame.image = image;
+            await freeGame.save();
+            res.json(freeGame);
+        } else {
+            res.status(404).send("Game not found");
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Internal Server Error");
     }
 });
 
 freeGameRouter.delete("/:id", async (req, res) => {
-    const actual = await FreeGame.findOne({ where: { id: req.params.id } });
-    if (actual) {
-        await actual.destroy();
-        res.json(actual);
-    }
-    else {
-        res.status(404).send("Game not found");
+    try {
+        const freeGame = await FreeGame.findByIdAndDelete(req.params.id);
+        if (freeGame) {
+            res.json(freeGame);
+        } else {
+            res.status(404).send("Game not found");
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Internal Server Error");
     }
 });

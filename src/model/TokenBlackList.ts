@@ -1,7 +1,7 @@
-import { DataTypes, Sequelize } from "sequelize";
+import mongoose from "mongoose";
 
-export const TokenBlackListModel = (sequelize: Sequelize) => {
-    return sequelize.define('token-black-list', {
-        token: DataTypes.STRING,
-    });
-}
+const tokenBlackListSchema = new mongoose.Schema({
+  token: String,
+});
+
+export const TokenBlackList = mongoose.model("TokenBlackList", tokenBlackListSchema);
