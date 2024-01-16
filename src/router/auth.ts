@@ -10,7 +10,7 @@ export const authRouter = Router();
 authRouter.post("/local/register", async (req, res) => {
     // const username = req.body.username;
     // const password = req.body.password;
-    // const email = req.body.email;
+    // const email = req.body.email
 
     // toto
 
